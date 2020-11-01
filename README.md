@@ -1,6 +1,163 @@
 # algorithm-prac
+###풀이파일 주소 (https://github.com/Hyeongyu-IM/Campus-Leture/tree/master/practice.playground)
 
-## 알고리즘 문제 리뷰. 프로그래머스 레벨 1 (2020.10.25 )
+## 알고리즘 문제 리뷰. 프로그래머스 레벨 1 ( 2020.10.26 ~ 2020.11.01 )
+
+### 1. 평균 구하기 ( [https://memohg.tistory.com/89?category=884219](https://memohg.tistory.com/89?category=884219) )
+
+- 문제 자체는 어려운게 없었고 새로 습득한 지식은 정수와 더블의 연산으로는 더블이 리턴될수 없다는것
+- 더블 / 더블 을 해야 더블이 리턴된다
+
+    ```swift
+    func solution(_ arr:[Int]) -> Double {
+        return Double(arr.reduce(0,+))/Double(arr.count)
+    }
+    ```
+
+### 2. 콜라츠 추측 ( [https://memohg.tistory.com/87?category=884219](https://memohg.tistory.com/87?category=884219) )
+
+- 수식이 이미 문제에 제시되었었기 때문에 그대로 구현했고 다만 조건의 우선순위를 판단하는것이 중요한 문제였다.
+
+### 3. 최대공약수와 최소공배수 ( [https://memohg.tistory.com/85?category=884219](https://memohg.tistory.com/85?category=884219) )
+
+- 최대공약수, 최소공배수를 구하는 공식을 찾아 해결하였으며 인상깊은 코드를 작성한것을 보고 따라했습니다.
+    - 최대공약수 공식
+        - 숫자1 % 숫자 2 == 0 ? 둘중최소값(숫자1, 숫자2) : 없으면 다시(숫자2, 숫자1 % 숫자2)
+    - 최소공배수 공식
+        - (숫자1 * 숫자2) / 최대공약수
+
+    ```swift
+    // 가장 작은수로 나누어 떨어질때까지 반복
+    func gcd(_ num: Int, _ num2: Int) -> Int {
+        let mod: Int = num % num2
+        return 0 == mod ? min(num, num2) : gcd(num2, mod)
+    }
+     
+    // 최대공약수로 두숫자를 곱한값을 나누면 최소공배수
+    func lcm(_ a: Int, _ b: Int) -> Int {
+        return a * b / gcd(a, b)
+    }
+     
+    func solution(_ n:Int, _ m:Int) -> [Int] {
+        return [gcd(n, m), lcm(n, m)]
+    }
+    ```
+
+### 4. 키패드 누르기 ( [https://memohg.tistory.com/82?category=884219](https://memohg.tistory.com/82?category=884219) )
+
+- 이번주 문제중에 가장높은 난이도에 가장많은 시간을 투자한 문제입니다.
+- 약 한시간가량을 좌표값없이 해보다가 안되는것을 깨닫고 `좌표값과 절대값을 이용`하여 풀었습니다.
+    - 문제의 핵심사항에 왼손잡이, 오른손잡이 별로 조건을 설정하는것도 어려웠습니다.
+
+    ```swift
+    import Foundation
+
+    func solution(_ numbers:[Int], _ hand:String) -> String {
+        let mapArray:[(Int, Int)] = [(3, 1),(0, 0),(0, 1),(0, 2)
+                                     ,(1, 0),(1, 1),(1, 2),(2, 0),
+                                     (2, 1),(2, 2),(3, 0),(3, 2)]
+                                     
+        func index (current: (Int, Int), point: (Int, Int)) -> Int {
+            return abs(abs(current.0 - point.0) + abs(current.1 - point.1))
+        }
+
+        var lefthand = mapArray[10]
+        var righthand = mapArray[11]
+        var result = ""
+
+        for num in numbers {
+            if num == 1 || num == 4 || num == 7 {
+                result += "L"
+                lefthand = mapArray[num]
+            } else if num == 3 || num == 6 || num == 9 {
+                result += "R"
+                righthand = mapArray[num]
+            } else if num == 2 || num == 5 || num == 8 || num == 0 {
+               let leftindex = index(current: lefthand, point: mapArray[num])
+               let rightindex = index(current: righthand, point: mapArray[num])
+                if hand == "right" {
+                    if leftindex >= rightindex {
+                        result += "R"
+                        righthand = mapArray[num]
+                    } else {
+                        result += "L"
+                        lefthand = mapArray[num]
+                    }
+                } else {
+                    if leftindex <= rightindex {
+                        result += "L"
+                        lefthand = mapArray[num]
+                    } else {
+                        result += "R"
+                        righthand = mapArray[num]
+                    }
+                }
+            }
+        }
+        return result
+    }
+    ```
+
+### 5. 짝수와 홀수
+
+- 가장 쉬운 문제였습니다.
+
+    ```swift
+    func solution(_ num:Int) -> String {
+        return num % 2 == 0 ? "Even" : "Odd"
+    }
+    ```
+
+### 6. 제일 작은 수 제거하기
+
+- 배열안의 숫자중에 가장작은 숫자를 빼는 문제였습니다
+- 이문제를 풀고 알게 되었던것이 컴팩트 맵은 변환과정에서 nil을 포함하지 않고 옵셔널 에러를 발생시키지 않는 다는 것을 알았습니다.
+- 저는 그냥 정렬한다음 제일앞에있는 수를 빼는 식으로 풀었습니다.
+
+    ```swift
+    //나의 풀이
+    func solution(_ arr:[Int]) -> [Int] {
+        var arr = arr
+       if arr.count <= 1 {
+           return [-1]
+       } else{
+       let smaller = arr.sorted()[0]
+        arr.remove(at: arr.firstIndex(of: smaller)!)
+        return arr
+       }
+    }
+
+    // 인상깊은 풀이
+    func solution(_ arr:[Int]) -> [Int] {
+        let min = arr.sorted(by: <)[0]
+         return arr.count == 1 ? [-1] : arr.compactMap({ return $0 != min ? $0 : nil })
+    }
+    ```
+
+### 7. 정수 제곱근 판별
+
+- 제곱근 공식을 보면서 그대로 풀이하였고 풀이한다음 `sqrt`란 메서드를 보고 깨달은 문제입니다.
+
+    ```swift
+    // 인상깊은 풀이
+    func solution(_ n:Int64) -> Int64 {
+        let x = Int64(sqrt(Double(n)))
+        return (x * x == n) ? ((x + 1) * (x + 1)) : -1
+    }
+
+       // 나의풀이
+    func solution(_ n:Int64) -> Int64 {
+        let x: Int = 1
+        while x*x == n {
+            if x*x == n {
+                return Int64((x+1)*(x+1))
+            }
+        }
+        return -1
+    }
+    ```
+
+## 알고리즘 문제 리뷰. 프로그래머스 레벨 1 (2020.10.12 ~ 2020.10.25 )
 
 ### 문자열 내 p와 y의 개수([https://memohg.tistory.com/54](https://memohg.tistory.com/54))
 
