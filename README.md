@@ -1,6 +1,123 @@
 # algorithm-prac
 ###풀이파일 주소 (https://github.com/Hyeongyu-IM/Campus-Leture/tree/master/practice.playground)
 
+## 알고리즘 문제 리뷰. 프로그래머스 레벨 1 ( 2020.11.02 ~ 2020.11.08 )
+
+### 1. 하샤드 수 ( [https://memohg.tistory.com/89?category=884219](https://memohg.tistory.com/90?category=884219) )
+
+- 문제에 하샤드 수의 조건이 표시되어있어서 어렵지 않았습니다.
+
+```swift
+func solution(_ x:Int) -> Bool {
+    return x % String(x).map{String($0)}.reduce(0){$0 + Int($1)!} == 0 ? true : false
+}
+```
+
+### 2. 핸드폰 번호 가리기 ( [https://memohg.tistory.com/91?category=884219](https://memohg.tistory.com/91?category=884219) )
+
+- 다른 분의 풀이가 인상적이였습니다. 문자열 다루기의 진수를 볼수있었습니다.
+
+    ```swift
+    String(repeating:"*", count:phone_number.count-4)+phone_number.suffix(4)
+    ```
+
+### 3. 행렬의 덧셈 ( [https://memohg.tistory.com/93?category=884219](https://memohg.tistory.com/93?category=884219) )
+
+- 문제 자체는 조금만 생각해보면 어렵지않게 풀수있는 문제였지만 맵을 활용하고 싶었으나 포기한문제...
+
+```swift
+// 인상깊은 풀이
+func solution(_ arr1:[[Int]], _ arr2:[[Int]]) -> [[Int]] {
+    return zip(arr1, arr2).map{zip($0,$1).map{$0+$1}}
+}
+```
+
+### 4. x만큼 간격이 있는 n개의 숫자 ( [https://memohg.tistory.com/95?category=884219](https://memohg.tistory.com/95?category=884219) )
+
+- 배열을 어떻게 만들고 시작할까... 에서 좀더 나아가서 맵을 이용했으면 하는 아쉬움이 있던 문제였습니다.
+
+    ```swift
+    // 나의 풀이
+    func solution(_ x:Int, _ n:Int) -> [Int64] {
+        var result: [Int64] = []
+        for index in 1...n {
+            result.append(Int64(index * x))
+        }
+        return result
+    }
+
+    // 인상깊은 풀이
+    func solution(_ x:Int, _ n:Int) -> [Int64] {
+        return Array(1...n).map { Int64($0 * x) }
+    }
+    ```
+
+### 5. 내적 ( [https://memohg.tistory.com/96?category=884219](https://memohg.tistory.com/96?category=884219) )
+
+- 이번 문제는 숫자가 하나로 도출되어서 아 이건 리듀스가 가능하겠구나 했지만 ... 어떻게 할지 생각하다가 포기했는데 어떤분이 하신게 있었다는...
+
+    removeFirst() 의 리턴값이 삭제되는 숫자라는것을 이용한 풀이여서 인상깊었습니다.
+
+    ```swift
+    // 나의풀이
+    func solution(_ a:[Int], _ b:[Int]) -> Int {
+        var result = 0
+        for i in 0..<a.count {
+            result += a[i] * b[i]
+        }
+        return result
+    }
+
+     // 인상깊은 풀이
+    func solution(_ a:[Int], _ b:[Int]) -> Int {
+        var b = b
+        return a.map{ $0 * b.removeFirst()}.reduce(0,+)
+    }
+    ```
+
+### 6. 예산 ( [https://memohg.tistory.com/97?category=884219](https://memohg.tistory.com/97?category=884219) )
+
+- 어떻게 풀면 될지 잠깐 고민했으나 정렬을 이용하면 쉽게 풀수있었습니다.
+- 고차함수를 잘이용해야 사람이 멋있게 보이는것 같습니다.
+
+    ```swift
+    // 나의 풀이
+    func solution(_ d:[Int], _ budget:Int) -> Int {
+        var bud = budget
+        let arrayd = d.sorted()
+        var count = 0
+        for i in arrayd {
+            if bud >= i {
+                bud -= i
+                count += 1
+            } 
+        }
+        return count
+    }
+
+    // 인상 깊은 풀이
+    func solution(_ d:[Int], _ budget:Int) -> Int {
+        var budget = budget
+
+        return d.sorted().filter{
+            budget = budget - $0
+            return budget >= 0
+        }.count
+    }
+    ```
+
+### 7. 직사각형 별찍기 ( [https://memohg.tistory.com/98?category=884219](https://memohg.tistory.com/98?category=884219) )
+
+- 갑작스레 등장한 입력받고 로그 찍기 문제 였지만 어렵지 않게 잘 해결하였습니다
+
+    ```swift
+    let n = readLine()!.components(separatedBy: [" "]).map { Int($0)! }
+    let (a, b) = (n[0], n[1])
+    var star = String(repeating:"*", count: a)
+    var space = String(repeating:"\(star)\n", count: b)
+    print(space)
+    ```
+
 ## 알고리즘 문제 리뷰. 프로그래머스 레벨 1 ( 2020.10.26 ~ 2020.11.01 )
 
 ### 1. 평균 구하기 ( [https://memohg.tistory.com/89?category=884219](https://memohg.tistory.com/89?category=884219) )
