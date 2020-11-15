@@ -1,6 +1,127 @@
 # algorithm-prac
 ###풀이파일 주소 (https://github.com/Hyeongyu-IM/Campus-Leture/tree/master/practice.playground)
 
+## 알고리즘 문제 리뷰. 프로그래머스 레벨 1 ( 2020.11.08 ~ 2020.11.15 )
+
+### 1. 비밀지도( [https://memohg.tistory.com/99?category=884219](https://memohg.tistory.com/99?category=884219) )
+
+```swift
+func solution(_ n:Int, _ arr1:[Int], _ arr2:[Int]) -> [String] {
+    var answer: [String] = []
+    var result = ""
+    for i in 0..<arr1.count {
+        let c = String(arr1[i] | arr2[i], radix: 2)
+        for q in c {
+           if q == "1" {
+               result += "#"
+           } else {
+               result += " "
+           }
+        }
+        if result.count < n {
+            for _ in 0 ... n - result.count - 1 {
+                result = " \(result)"
+            }
+        }
+        answer.append(result)
+        result = ""
+    }
+    return answer
+}
+```
+
+- 숫자를 이진수로 변환할때 정수를 두개를 , 를 기준점으로 같이 넣게  되면 같은자리에 0과 1이 만나게되면 1이 되게된다. 따라서 0 0일 때를 제외하고는 결과값을 쉽게 얻을수 있다.
+- 또한 이렇게 치환한 값의 길이가 짧을 경우를 대비해서 원래의 길이보다 작을 경우 작은만큼 앞에 공백을 추가해 주었다.
+
+### 2. 실패율 ( [https://memohg.tistory.com/100?category=884219](https://memohg.tistory.com/100?category=884219) )
+
+```swift
+func solution(_ N:Int, _ stages:[Int]) -> [(Int)] {
+    var countPerson = [(Int, Int)]()
+    var get = [(Int, Double)]()
+    var stageCount = stages.count
+    var result = [Int]()
+
+    for i in 1...N{
+        let result: Int = stages.filter { $0 == i }.count
+        countPerson.append((i, result))
+    }
+    // countPerson 예시 [(1, 1), (2, 3), (3, 2), (4, 1), (5, 0)]
+
+    for i in 0..<countPerson.count {
+        if stageCount != 0 {
+        var sum: Double = Double(countPerson[i].1) / Double(stageCount)
+        stageCount -= countPerson[i].1
+        get.append((countPerson[i].0, sum))
+        } else {
+            get.append((countPerson[i].0, 0))
+        }
+    }
+    //get예시 [(1, 0.125), (2, 0.42857142857142855), (3, 0.5), (4, 0.5), (5, 0.0)]
+
+   get.sorted{
+          if $0.1 == $1.1 {
+              return $0.0 < $1.0
+           }else {
+              return $0.1 > $1.1
+           }
+    }.map { result.append($0.0)}
+
+    return result //[3, 4, 2, 1, 5]
+}
+
+solution(5, [2,1,2,6,2,4,3,3])
+```
+
+- 어떻게 풀이할지는 계획을 쉽게 세웟으나 풀이를 써내려가는 조건이 생각하기 좀 어려웠습니다...
+- 각 스테이지별로 머무르는 유저수를 구해서 전체 유저에서 차례대로 빼가면서 실패율을 계산했습니다.
+- 만약 5개의 스테이지중 아직 도달하지 못한 스테이지가 있을수도 있기때문에 만약 전체 유저수에서 차례로 빼오던 값이 0이 될경우 실패율을 계산할수 없으므로 해당 스테이지에 0을 입력하였습니다.
+
+### 3. 다트 게임 ( [https://memohg.tistory.com/103?category=884219](https://memohg.tistory.com/103?category=884219) )
+
+```swift
+func solution(_ dartResult:String) -> Int {
+    var scores: [Int] = [Int](repeating: 0, count: 3)
+
+    var idx: Int = -1
+    var beforeChar: Character = " "
+    for char in dartResult {
+        switch char {
+        case "0"..."9":
+            if beforeChar == "1" {
+                scores[idx] = 10
+            } else {
+                idx += 1
+                scores[idx] = Int(String(char))!
+            }
+        case "D":
+            scores[idx] = scores[idx] * scores[idx]
+        case "T":
+            scores[idx] = scores[idx] * scores[idx] * scores[idx]
+        case "*":
+            if idx < 1 {
+                scores[idx] *= 2
+            } else {
+                scores[idx-1] *= 2
+                scores[idx] *= 2
+            }
+        case "#":
+            scores[idx] *= -1
+        default:
+            break
+        }
+        beforeChar = char
+    }
+
+    return scores.reduce(0, +)
+}
+```
+
+- 이번 문제는 음... 이렇게 하면되겠군 하고 풀다가 10을 생각 못하고 .. 멘탈이 무너져 검색으로 해결한 문제입니다. 이 문제가 레벨 1 마지막 문제였는데 다음날 다시 시도해서 혼자 풀어 보았습니다
+- 주된 핵심사항은 반복문을 돌릴때 정수일때 인덱스를 한칸 이동시킵니다 저는 바보같이 기준을 0으로 두었었는데 어떻게 하나 한참 고민했었는데... 그냥 -1을 선언하면 되는 것였네요;;;
+- 그리고 마지막에는 들어왔던 문자열을 저장해서 다음판별에 만약 정수가 1이였을경우 또다시 정수가 들어올경우 무조건 10이 들어오므로 10을 넣어주게 구현했습니다.
+- 그리고 이문제를 검색으로 해결한 것이 다행이였던것이 저는 * 조건을 바로전 점수만 해당하는것이 아니라 3번째에 * 들어 있으면 이전점수 모두를 각각 *2하는줄 알았는데 아니였네요... 다시한번 조건을 잘 읽어보고 숙지해야함을 깨달은 문제였습니다.
+
 ## 알고리즘 문제 리뷰. 프로그래머스 레벨 1 ( 2020.11.02 ~ 2020.11.08 )
 
 ### 1. 하샤드 수 ( [https://memohg.tistory.com/89?category=884219](https://memohg.tistory.com/90?category=884219) )
